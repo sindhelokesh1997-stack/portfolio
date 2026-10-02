@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sindhe Lokesh | Spatial & Product Designer</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=JetBrains+Mono:wght@100..800&family=Nothing+You+Could+Do&display=swap" rel="stylesheet">
+    
+    <!-- GSAP & ScrollTrigger -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#F4F1EA',
+                        forest: '#1B382B',
+                        crimson: '#8B1E1E',
+                    },
+                    fontFamily: {
+                        serif: ['"Cormorant Garamond"', 'serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                        script: ['"Nothing You Could Do"', 'cursive'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        html { scroll-behavior: smooth; }
+        .bg-gradient-mesh {
+            background: radial-gradient(circle at 20% 50%, rgba(217, 119, 67, 1) 0%, rgba(230, 80, 50, 1) 50%, rgba(139, 30, 30, 1) 100%);
+        }
+        
+        /* Auto-scrolling Carousel Animations */
+        @keyframes marquee {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+            display: flex;
+            width: max-content;
+            animation: marquee 35s linear infinite;
+        }
+        .animate-marquee:hover {
+            animation-play-state: paused;
+        }
+
+        /* Dome Gallery Specific Styles */
+        .dg-stage {
+            transform-style: preserve-3d;
+            perspective: 1200px;
+        }
+        .dg-sphere {
+            transform-style: preserve-3d;
+            will-change: transform;
+        }
+        .dg-item {
+            position: absolute;
+            left: 50%; top: 50%;
+            width: 140px; height: 180px;
+            margin-left: -70px; margin-top: -90px;
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+            transform: rotateY(var(--item-rot-y)) rotateX(var(--item-rot-x)) translateZ(var(--radius));
+            transition: opacity 0.3s ease;
+        }
+        @media (min-width: 768px) {
+            .dg-item {
+                width: 220px; height: 300px;
+                margin-left: -110px; margin-top: -150px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-cream text-forest font-serif antialiased overflow-x-hidden transition-colors">
+
+    <!-- Header Navigation -->
+    <header class="fixed top-0 left-0 w-full p-4 md:p-6 flex justify-between items-center z-50 text-cream font-mono text-[10px] md:text-xs uppercase tracking-widest pointer-events-none">
+        <!-- Logo -->
+        <div class="pointer-events-auto">
+            <a href="javascript:void(0);" onclick="showHome(); if(isMobileMenuOpen) toggleMobileMenu();" class="hover:opacity-70 transition-opacity">SL / PORTFOLIO</a>
+        </div>
+        
+        <!-- Desktop Navigation -->
+        <div class="hidden md:flex gap-8 pointer-events-auto">
+            <a href="javascript:void(0);" onclick="showHome('#work')" class="hover:opacity-70 transition-opacity">Work</a>
+            <a href="javascript:void(0);" onclick="showHome('#things')" class="hover:opacity-70 transition-opacity">Things Along the Way</a>
+            <a href="javascript:void(0);" onclick="showHome('#experience')" class="hover:opacity-70 transition-opacity">Experience</a>
+            <a href="javascript:void(0);" onclick="showHome('#contact')" class="hover:opacity-70 transition-opacity">Contact</a>
+        </div>
+
+        <!-- Mobile Hamburger Button -->
+        <button id="hamburger-btn" class="md:hidden pointer-events-auto flex flex-col justify-center items-center w-8 h-8 space-y-1.5 focus:outline-none z-50" onclick="toggleMobileMenu()">
+            <span class="block w-6 h-[1px] bg-cream transition-transform duration-300 origin-center"></span>
+            <span class="block w-6 h-[1px] bg-cream transition-opacity duration-300"></span>
+            <span class="block w-6 h-[1px] bg-cream transition-transform duration-300 origin-center"></span>
+        </button>
+    </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 bg-forest/95 backdrop-blur-md z-40 flex flex-col items-center justify-center gap-10 font-mono text-sm uppercase tracking-widest text-cream opacity-0 pointer-events-none transition-opacity duration-300">
+        <a href="javascript:void(0);" onclick="toggleMobileMenu(); showHome('#work')" class="hover:opacity-70 transition-opacity">Work</a>
+        <a href="javascript:void(0);" onclick="toggleMobileMenu(); showHome('#things')" class="hover:opacity-70 transition-opacity">Things Along the Way</a>
+        <a href="javascript:void(0);" onclick="toggleMobileMenu(); showHome('#experience')" class="hover:opacity-70 transition-opacity">Experience</a>
+        <a href="javascript:void(0);" onclick="toggleMobileMenu(); showHome('#contact')" class="hover:opacity-70 transition-opacity">Contact</a>
+    </div>
+
+    <!-- ================= HOME VIEW ================= -->
+    <main id="home-view" class="relative z-10 block">
+        
+        <!-- Hero Section -->
+        <section class="min-h-screen flex flex-col items-center justify-end text-center px-4 relative pt-20 pb-16 md:pb-24 w-full overflow-hidden bg-[url('assets/home/hero-bg.jpg')] bg-cover bg-center">
+            <div class="absolute top-0 left-0 w-full h-[5%] bg-gradient-to-b from-black/90 to-transparent"></div>
+            <div class="relative z-10 w-full flex flex-col items-center transform translate-y-[5vh]">
+                <h1 class="text-[12vw] md:text-8xl lg:text-9xl leading-none mb-4 md:mb-6 whitespace-nowrap text-crimson font-bold">Sindhe Lokesh</h1>
+                <p class="font-mono text-[2.5vw] sm:text-[1.5vw] md:text-sm uppercase tracking-widest text-crimson/90 whitespace-nowrap">Spatial & Product Designer | Interior Stylist | Craft & Material Specialist</p>
+            </div>
+        </section>
+
+        <!-- Bio Section -->
+        <section class="py-24 md:py-40 px-6 md:px-20 max-w-[1400px] mx-auto flex flex-col items-center justify-center text-center">
+            <h2 id="scroll-reveal-container" class="text-2xl md:text-4xl lg:text-5xl leading-relaxed md:leading-normal text-crimson font-serif will-change-transform">
+                <span id="scroll-reveal-text1">I create immersive spaces and objects where contemporary design meets Indian craft, materials, and storytelling.</span><br><br>
+                <span id="scroll-reveal-text2">From concept to craft, I explore materials, collaborate with artisans, and bring ideas to life through thoughtful making and execution.</span>
+            </h2>
+        </section>
+
+        <!-- What I Do Grid -->
+        <section class="py-16 md:py-24 border-t border-forest/20">
+            <div class="text-center mb-12 md:mb-16">
+                <h2 class="text-3xl md:text-5xl uppercase tracking-widest">What I Do</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 border-y border-forest/20 max-w-screen-2xl mx-auto">
+                <div class="border-b lg:border-b-0 lg:border-r border-forest/20 p-8 md:p-12 flex items-center justify-center text-center cursor-default group hover:bg-crimson transition-colors duration-700"><span class="font-mono text-xs md:text-sm uppercase tracking-widest text-forest group-hover:text-cream transition-colors duration-700">Concept Development</span></div>
+                <div class="border-b lg:border-b-0 lg:border-r border-forest/20 p-8 md:p-12 flex items-center justify-center text-center cursor-default group hover:bg-crimson transition-colors duration-700"><span class="font-mono text-xs md:text-sm uppercase tracking-widest text-forest group-hover:text-cream transition-colors duration-700">Product Design</span></div>
+                <div class="border-b md:border-b-0 lg:border-r border-forest/20 p-8 md:p-12 flex items-center justify-center text-center cursor-default group hover:bg-crimson transition-colors duration-700"><span class="font-mono text-xs md:text-sm uppercase tracking-widest text-forest group-hover:text-cream transition-colors duration-700">Visual Storytelling</span></div>
+                <div class="border-b lg:border-b-0 lg:border-r border-forest/20 p-8 md:p-12 flex items-center justify-center text-center cursor-default group hover:bg-crimson transition-colors duration-700"><span class="font-mono text-xs md:text-sm uppercase tracking-widest text-forest group-hover:text-cream transition-colors duration-700">Prototyping</span></div>
+                <div class="border-b md:border-b-0 lg:border-r border-forest/20 p-8 md:p-12 flex items-center justify-center text-center cursor-default group hover:bg-crimson transition-colors duration-700"><span class="font-mono text-xs md:text-sm uppercase tracking-widest text-forest group-hover:text-cream transition-colors duration-700">Sketching</span></div>
+                <div class="p-8 md:p-12 flex items-center justify-center text-center cursor-default group hover:bg-crimson transition-colors duration-700"><span class="font-mono text-xs md:text-sm uppercase tracking-widest text-forest group-hover:text-cream transition-colors duration-700">Design Research</span></div>
+            </div>
+        </section>
+
+        <!-- Projects Grid -->
+        <section id="work" class="bg-gradient-mesh text-cream py-24 md:py-40 px-6 flex flex-col items-center justify-center relative overflow-hidden">
+            <h2 class="text-6xl md:text-8xl lg:text-9xl uppercase tracking-widest text-center mix-blend-overlay relative z-10">Projects</h2>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 w-full max-w-[1400px] mt-16 md:mt-24 relative z-10 px-0 md:px-4">
+                <div onclick="showProject('project-1')" class="cursor-pointer flex flex-col group">
+                    <div class="w-full aspect-[3/4] overflow-hidden mb-4 md:mb-6 relative shadow-lg">
+                        <div class="absolute inset-0 bg-[url('assets/home/thumb-p1.jpg')] bg-cover bg-center transition-transform duration-700 group-hover:scale-105"></div>
+                        <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-700"></div>
+                    </div>
+                    <div class="flex flex-col text-left">
+                        <span class="font-mono text-[10px] md:text-xs uppercase tracking-widest mb-1 text-cream/70">01</span>
+                        <span class="font-serif text-2xl md:text-3xl uppercase tracking-widest text-cream group-hover:text-forest transition-colors duration-500">Shadows of Tholu</span>
+                    </div>
+                </div>
+                <div onclick="showProject('project-2')" class="cursor-pointer flex flex-col group">
+                    <div class="w-full aspect-[3/4] overflow-hidden mb-4 md:mb-6 relative shadow-lg">
+                        <div class="absolute inset-0 bg-[url('assets/home/thumb-p2.jpg')] bg-cover bg-center transition-transform duration-700 group-hover:scale-105"></div>
+                        <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-700"></div>
+                    </div>
+                    <div class="flex flex-col text-left">
+                        <span class="font-mono text-[10px] md:text-xs uppercase tracking-widest mb-1 text-cream/70">02</span>
+                        <span class="font-serif text-2xl md:text-3xl uppercase tracking-widest text-cream group-hover:text-forest transition-colors duration-500">Hanuman's Journey</span>
+                    </div>
+                </div>
+                <div onclick="showProject('project-3')" class="cursor-pointer flex flex-col group">
+                    <div class="w-full aspect-[3/4] overflow-hidden mb-4 md:mb-6 relative shadow-lg">
+                        <div class="absolute inset-0 bg-[url('assets/home/thumb-p3.jpg')] bg-cover bg-center transition-transform duration-700 group-hover:scale-105"></div>
+                        <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-700"></div>
+                    </div>
+                    <div class="flex flex-col text-left">
+                        <span class="font-mono text-[10px] md:text-xs uppercase tracking-widest mb-1 text-cream/70">03</span>
+                        <span class="font-serif text-2xl md:text-3xl uppercase tracking-widest text-cream group-hover:text-forest transition-colors duration-500">The Jungle Book</span>
+                    </div>
+                </div>
+                <div onclick="showProject('project-4')" class="cursor-pointer flex flex-col group">
+                    <div class="w-full aspect-[3/4] overflow-hidden mb-4 md:mb-6 relative shadow-lg">
+                        <div class="absolute inset-0 bg-[url('assets/home/thumb-p4.jpg')] bg-cover bg-center transition-transform duration-700 group-hover:scale-105"></div>
+                        <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-700"></div>
+                    </div>
+                    <div class="flex flex-col text-left">
+                        <span class="font-mono text-[10px] md:text-xs uppercase tracking-widest mb-1 text-cream/70">04</span>
+                        <span class="font-serif text-2xl md:text-3xl uppercase tracking-widest text-cream group-hover:text-forest transition-colors duration-500">Home Decor</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Things Along the Way (3D Dome Gallery Edge-to-Edge) -->
+        <section id="things" class="bg-cream py-24 md:py-40 relative overflow-hidden select-none">
+            <div class="text-left md:text-center mb-12 md:mb-24 relative z-10 pointer-events-none px-6 w-full max-w-[1400px] mx-auto">
+                <h2 class="text-4xl md:text-6xl lg:text-7xl uppercase tracking-widest text-crimson font-serif">Things Along the Way</h2>
+                <p class="font-mono text-xs md:text-sm uppercase tracking-widest text-forest/70 mt-4">Drag to explore</p>
+            </div>
+            
+            <div id="dome-gallery-root" class="w-full max-w-[1400px] mx-auto h-[60vh] md:h-[80vh] relative cursor-grab active:cursor-grabbing">
+                <div class="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-cream to-transparent z-20 pointer-events-none"></div>
+                <div class="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-cream to-transparent z-20 pointer-events-none"></div>
+                
+                <div class="dg-stage absolute inset-0 w-full h-full flex items-center justify-center">
+                    <div class="dg-sphere w-full h-full absolute inset-0 flex items-center justify-center">
+                        <!-- JavaScript will inject the exactly 17 images mapped across the dome grid here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Experience Timeline -->
+        <section id="experience" class="bg-crimson text-cream py-20 md:py-32 px-6 md:px-20 border-t border-cream/20 text-left">
+            <div class="w-full max-w-[1400px] mx-auto">
+                <h2 class="text-4xl md:text-6xl uppercase tracking-widest mb-12 md:mb-24">Experience &<br>Education</h2>
+                <div class="flex flex-col gap-8 font-mono text-xs md:text-sm uppercase tracking-wider w-full">
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-4 border-b border-cream/30 pb-8 hover:opacity-70 transition-opacity">
+                        <div class="md:col-span-3 opacity-70 md:opacity-100">2026</div><div class="md:col-span-3 font-bold mb-2 md:mb-0">KMV Projects Limited</div>
+                        <div class="md:col-span-6 leading-relaxed">Design & Project Development - Vijayawada Airport Heritage Installation. Developed the design concept and visual language for a large suspended ceiling installation inspired by Tholu Bommalata, using tree, bird and cloud motifs. Worked across design development, material specification, costing, fabrication logic and installation considerations for a 12,664 sq.ft. airport installation.</div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-4 border-b border-cream/30 pb-8 hover:opacity-70 transition-opacity">
+                        <div class="md:col-span-3 opacity-70 md:opacity-100">2024 — 2026</div><div class="md:col-span-3 font-bold mb-2 md:mb-0">NIFT, Bengaluru</div>
+                        <div class="md:col-span-6 leading-relaxed">Master of Design. Developed contemporary home decor products by translating traditional Indian craft techniques, motifs and materials into modern interior applications.</div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-4 border-b border-cream/30 pb-8 hover:opacity-70 transition-opacity">
+                        <div class="md:col-span-3 opacity-70 md:opacity-100">2021 — 2024</div><div class="md:col-span-3 font-bold mb-2 md:mb-0">Sangaru Design Objects</div>
+                        <div class="md:col-span-6 leading-relaxed">Spatial Designer - Craft, Furniture & Material Projects. Worked on design development involving bamboo, leather and other natural materials, with exposure to furniture, objects and spatial applications. Supported concept development, material experimentation, prototyping and execution of craft-based design outcomes.</div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-4 border-b border-cream/30 pb-8 hover:opacity-70 transition-opacity">
+                        <div class="md:col-span-3 opacity-70 md:opacity-100">2020</div><div class="md:col-span-3 font-bold mb-2 md:mb-0">Disney-USA</div>
+                        <div class="md:col-span-6 leading-relaxed">Indianising The Jungle Book Characters - Design Project. Worked on a design internship project focused on adapting Disney's characters into traditional Indian puppetry aesthetics. Reinterpreted character forms, costumes, colours and visual elements using Indian puppetry traditions.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Footer -->
+        <footer id="contact" class="bg-cream text-forest pt-16 pb-8 md:pt-24 md:pb-12 px-6 md:px-12 flex flex-col justify-between min-h-[40vh] md:min-h-[50vh]">
+            <div class="grid grid-cols-1 md:grid-cols-3 border-y border-forest/20 py-8 font-mono text-xs md:text-sm uppercase tracking-widest text-left">
+                <div><span class="opacity-50 block mb-2">Email</span><a href="mailto:sindhelokesh1997@gmail.com" class="hover:opacity-70">sindhelokesh1997@gmail.com</a></div>
+                <div class="mt-8 md:mt-0"><span class="opacity-50 block mb-2">Location</span><span>Bengaluru, India</span></div>
+                <div class="mt-8 md:mt-0 md:text-right"><span class="opacity-50 block mb-2">Tel</span><a href="tel:+918978257805" class="hover:opacity-70">+91 89782 57805</a></div>
+            </div>
+            <div class="mt-16 md:mt-24 text-center"><h2 class="text-[15vw] md:text-[12vw] leading-none uppercase tracking-tighter">Lokesh.</h2></div>
+        </footer>
+    </main>
+
+    <!-- ================= PROJECT VIEWS ================= -->
+
+    <!-- PROJECT 01 -->
+    <main id="project-1" class="project-view fixed inset-0 z-40 bg-crimson text-cream overflow-y-auto transform translate-y-full transition-transform duration-[800ms] ease-[cubic-bezier(0.76,0,0.24,1)] pb-16 md:pb-24">
+        <div class="w-full h-[50vh] md:h-[80vh] bg-[url('assets/project-1/hero.jpg')] bg-cover bg-center"></div>
+        <section class="py-12 md:py-16 px-6 max-w-[1400px] mx-auto border-b border-cream/20 flex flex-col md:flex-row gap-8 md:gap-12 items-start justify-between">
+            <div class="w-full md:w-2/3 text-left">
+                <h1 class="text-4xl md:text-6xl lg:text-7xl mb-6 md:mb-8 font-serif leading-tight">Shadows of Tholu</h1>
+                <div class="flex flex-col md:flex-row gap-2 md:gap-8 font-mono text-[10px] md:text-xs uppercase opacity-70">
+                    <span>Vijayawada International Airport</span><span class="hidden md:inline">|</span><span>2026</span><span class="hidden md:inline">|</span><span>KMV Projects</span>
+                </div>
+            </div>
+            <div class="w-full md:w-1/3 flex flex-col items-start md:items-end text-left md:text-right">
+                <p class="font-serif text-lg leading-relaxed opacity-90">A suspended leather canopy of Andhra's shadow puppetry, at Vijayawada International Airport.</p>
+            </div>
+        </section>
+        <section class="px-6 max-w-[1400px] mx-auto py-12 md:py-16 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="aspect-[4/3] bg-black/40 bg-[url('assets/project-1/grid-1.jpg')] bg-cover bg-center"></div>
+            <div class="aspect-[4/3] bg-black/40 bg-[url('assets/project-1/grid-2.jpg')] bg-cover bg-center"></div>
+        </section>
+        <section class="px-6 max-w-4xl mx-auto py-12 md:py-16 text-left">
+            <h2 class="text-3xl md:text-5xl font-serif mb-6 md:mb-10 leading-tight">An airport becomes a stage</h2>
+            <p class="font-serif text-lg md:text-xl leading-relaxed opacity-80">Envisioned as a “sky of shadows,” this leather installation reimagines the arrival experience at Vijayawada International Airport. Suspended above the terminal, it turns a place of transit into a place of story, and gives the city's gateway a sense of place that could belong nowhere else in the world.</p>
+        </section>
+        
+        <section class="w-full relative py-8 md:py-12 my-8 md:my-12 overflow-hidden bg-cream/5 flex">
+            <div class="animate-marquee">
+                <div class="flex gap-4 pr-4">
+                    <div class="aspect-[4/3] w-[85vw] sm:w-[60vw] md:w-[45vw] lg:w-[35vw] bg-[url('assets/project-1/carousel-1.jpg')] bg-cover bg-center shadow-lg"></div>
+                    <div class="aspect-[4/3] w-[85vw] sm:w-[60vw] md:w-[45vw] lg:w-[35vw] bg-[url('assets/project-1/carousel-2.jpg')] bg-cover bg-center shadow-lg"></div>
+                    <div class="aspect-[4/3] w-[85vw] sm:w-[60vw] md:w-[45vw] lg:w-[35vw] bg-[url('assets/project-1/carousel-3.jpg')] bg-cover bg-center shadow-lg"></div>
+                    <div class="aspect-[4/3] w-[85vw] sm:w-[60vw] md:w-[45vw] lg:w-[35vw] bg-[url('assets/project-1/carousel-4.jpg')] bg-cover bg-center shadow-lg"></div>
+                </div>
+                <div class="flex gap-4 pr-4">
+                    <div class="aspect-[4/3] w-[85vw] sm:w-[60vw] md:w-[45vw] lg:w-[35vw] bg-[url('assets/project-1/carousel-1.jpg')] bg-cover bg-center shadow-lg"></div>
+                    <div class="aspect-[4/3] w-[85vw] sm:w-[60vw] md:w-[45vw] lg:w-[35vw] bg-[url('assets/project-1/carousel-2.jpg')] bg-cover bg-center shadow-lg"></div>
+                    <div class="aspect-[4/3] w-[85vw] sm:w-[60vw] md:w-[45vw] lg:w-[35vw] bg-[url('assets/project-1/carousel-3.jpg')] bg-cover bg-center shadow-lg"></div>
+                    <div class="aspect-[4/3] w-[85vw] sm:w-[60vw] md:w-[45vw] lg:w-[35vw] bg-[url('assets/project-1/carousel-4.jpg')] bg-cover bg-center shadow-lg"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="px-6 max-w-4xl mx-auto py-12 md:py-16 text-left">
+            <p class="font-serif text-lg md:text-xl leading-relaxed mb-6 md:mb-8 opacity-80">Hand-cut and hand-painted in Nimmalakunta, the work brings Tholu Bommalata, the leather shadow puppetry of Andhra Pradesh, out of the village theatre and into one of the state's busiest public spaces. For a craft that has always lived in lamplight, the airport becomes a new stage.</p>
+            <p class="font-serif text-lg md:text-xl leading-relaxed opacity-80">Spanning <b>5,600 square feet</b> and made up of <b>2,650 individual leather pieces</b>, it is, to our knowledge, the largest single craft installation in India.</p>
+        </section>
+        <section class="px-6 max-w-[1400px] mx-auto py-8 md:py-12">
+            <div class="w-full aspect-video bg-black/80 relative flex items-center justify-center cursor-pointer group bg-[url('assets/project-1/video-thumb.jpg')] bg-cover bg-center mix-blend-luminosity">
+                <div class="absolute inset-0 bg-crimson/40 group-hover:bg-crimson/20 transition-colors"></div>
+                <div class="relative z-10 font-mono text-xs md:text-sm uppercase tracking-widest border border-cream px-6 md:px-8 py-3 md:py-4 group-hover:scale-105 group-hover:bg-cream group-hover:text-crimson transition-all">Watch Now</div>
+            </div>
+        </section>
+        <section class="px-6 max-w-4xl mx-auto py-12 md:py-20 border-b border-cream/20 text-left">
+            <h2 class="text-3xl md:text-5xl font-serif mb-6 md:mb-10 leading-tight">A canopy that filters light like a shadow screen</h2>
+            <p class="font-serif text-lg md:text-xl leading-relaxed mb-6 md:mb-8 opacity-80">Tholu Bommalata is performed by passing light through translucent, intricately perforated leather. The installation holds to that principle. Layers of treated leather figures hang at varying heights, so daylight and terminal lighting pass through the perforations and scatter patterned shadows across the floor and the passengers below.</p>
+            <p class="font-serif text-lg md:text-xl leading-relaxed opacity-80">Gods, epics, dancers and the everyday life of the Telugu land are carved into the hides, so travellers walk beneath the stories rather than simply past them.</p>
+        </section>
+        <section class="px-6 max-w-[1400px] mx-auto pt-16 md:pt-24 text-left">
+            <h3 class="font-serif text-2xl md:text-3xl mb-8 md:mb-12">Explore more of our spatial projects</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-6">
+                <div onclick="showProject('project-2')" class="group cursor-pointer flex flex-col gap-4"><div class="w-full aspect-[3/4] bg-[url('assets/home/thumb-p2.jpg')] bg-cover bg-center overflow-hidden shadow-lg"><div class="w-full h-full bg-black/20 group-hover:bg-transparent transition-colors duration-700"></div></div><h4 class="font-serif text-xl">Hanuman's Journey to the Pooja Room</h4></div>
+                <div onclick="showProject('project-3')" class="group cursor-pointer flex flex-col gap-4"><div class="w-full aspect-[3/4] bg-[url('assets/home/thumb-p3.jpg')] bg-cover bg-center overflow-hidden shadow-lg"><div class="w-full h-full bg-black/20 group-hover:bg-transparent transition-colors duration-700"></div></div><h4 class="font-serif text-xl">The Jungle Book Reimagined</h4></div>
+                <div onclick="showProject('project-4')" class="group cursor-pointer flex flex-col gap-4"><div class="w-full aspect-[3/4] bg-[url('assets/home/thumb-p4.jpg')] bg-cover bg-center overflow-hidden shadow-lg"><div class="w-full h-full bg-black/20 group-hover:bg-transparent transition-colors duration-700"></div></div><h4 class="font-serif text-xl">Contemporary Home Decor</h4></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- PROJECT 02 -->
+    <main id="project-2" class="project-view fixed inset-0 z-40 bg-crimson text-cream overflow-y-auto transform translate-y-full transition-transform duration-[800ms] ease-[cubic-bezier(0.76,0,0.24,1)] pb-16 md:pb-24">
+        <div class="w-full h-[50vh] md:h-[80vh] bg-[url('assets/project-2/hero.jpg')] bg-cover bg-center"></div>
+        <section class="py-12 md:py-16 px-6 max-w-[1400px] mx-auto border-b border-cream/20 flex flex-col md:flex-row gap-8 md:gap-12 items-start justify-between">
+            <div class="w-full md:w-2/3 text-left">
+                <h1 class="text-4xl md:text-6xl lg:text-7xl mb-6 md:mb-8 font-serif leading-tight">Hanuman's Journey to the Pooja Room</h1>
+                <div class="flex flex-col md:flex-row gap-2 md:gap-8 font-mono text-[10px] md:text-xs uppercase opacity-70">
+                    <span>Sreenivasan, owner of Telugu Titans</span><span class="hidden md:inline">|</span><span>2020</span>
+                </div>
+            </div>
+            <div class="w-full md:w-1/3 flex flex-col items-start md:items-end text-left md:text-right">
+                <p class="font-serif text-lg leading-relaxed opacity-90">A 40 × 8 ft leather puppetry ceiling that turns the walkway from the main door to the pooja room into a pilgrimage.</p>
+            </div>
+        </section>
+        <section class="px-6 max-w-[1400px] mx-auto py-12 md:py-16 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="aspect-[4/3] bg-black/40 bg-[url('assets/project-2/grid-1.jpg')] bg-cover bg-center"></div>
+            <div class="aspect-[4/3] bg-black/40 bg-[url('assets/project-2/grid-2.jpg')] bg-cover bg-center"></div>
+        </section>
+        <section class="px-6 max-w-4xl mx-auto py-12 md:py-16 text-left">
+            <h2 class="text-3xl md:text-5xl font-serif mb-6 md:mb-10 leading-tight">The concept</h2>
+            <p class="font-serif text-lg md:text-xl leading-relaxed opacity-80">In this home, the walkway from the main door to the pooja room is more than a passage. Overhead, a story unfolds: Hanuman is travelling to the pooja room, and the whole ceiling is his path. As you walk, you follow him through the world he crosses.</p>
+        </section>
+        
+        <section class="w-full relative py-8 md:py-12 my-8 md:my-12 overflow-hidden bg-cream/5 flex">
+            <div class="animate-marquee">
+                <div class="flex gap-4 pr-4">
+                    <div class="aspect-[4/3] w-[85vw] sm:w-[60vw] md:w-[45vw] lg:w-[35vw] bg-[url('assets/project-2/carousel-1.jpg')] bg-cover bg-center shadow-lg"></div>
+                    <div class="aspect-[4/3] w-[85vw] sm:w-[60vw] md:w-[45vw] lg:w-[35vw] bg-[url('assets/project-2/carousel-2.jpg')] bg-cover bg-center shadow-lg"></div>
+                    <div class="aspect-[4/3] w-[85vw] sm:w-[60vw] md:w-[45vw] lg:w-[35vw] bg-[url('assets/project-2/carousel-3.jpg')] bg-cover bg-center shadow-lg"></div>
+                    <div class="aspect-[4/3] w-[85vw] sm:w-[60vw] md:w-[45vw] lg:w-[35vw] bg-[url('assets/project-2/carousel-4.jpg')] bg-cover bg-center shadow-lg"></div>
+                </div>
+                <div class="flex gap-4 pr-4">
+                    <div class="aspect-[4/3] w-[85vw] sm:w-[60vw] md:w-[45vw] lg:w-[35vw] bg-[url('assets/project-2/carousel-1.jpg')] bg-cover bg-center shadow-lg"></div>
+                    <div class="aspect-[4/3] w-[85vw] sm:w-[60vw] md:w-[45vw] lg:w-[35vw] bg-[url('assets/project-2/carousel-2.jpg')] bg-cover bg-center shadow-lg"></div>
+                    <div class="aspect-[4/3] w-[85vw] sm:w-[60vw] md:w-[45vw] lg:w-[35vw] bg-[url('assets/project-2/carousel-3.jpg')] bg-cover bg-center shadow-lg"></div>
+                    <div class="aspect-[4/3] w-[85vw] sm:w-[60vw] md:w-[45vw] lg:w-[35vw] bg-[url('assets/project-2/carousel-4.jpg')] bg-cover bg-center shadow-lg"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="px-6 max-w-4xl mx-auto py-12 md:py-16 text-left">
+            <p class="font-serif text-lg md:text-xl leading-relaxed opacity-80">He passes birds in flight and drifting clouds, then mountains and a forest of tall trees. Beyond them lie crop fields, a river, and finally a sea alive with fish. Each landscape is its own zone of the ceiling, so the journey can be read from one end of the walkway to the other.</p>
+        </section>
+        <section class="px-6 max-w-[1400px] mx-auto py-8 md:py-12">
+            <div class="w-full aspect-video bg-black/80 relative flex items-center justify-center cursor-pointer group bg-[url('assets/project-2/video-thumb.jpg')] bg-cover bg-center mix-blend-luminosity">
+                <div class="absolute inset-0 bg-crimson/40 group-hover:bg-crimson/20 transition-colors"></div>
+                <div class="relative z-10 font-mono text-xs md:text-sm uppercase tracking-widest border border-cream px-6 md:px-8 py-3 md:py-4 group-hover:scale-105 group-hover:bg-cream group-hover:text-crimson transition-all">Watch Now</div>
+            </div>
+        </section>
+        <section class="px-6 max-w-4xl mx-auto py-12 md:py-20 border-b border-cream/20 text-left">
+            <h2 class="text-3xl md:text-5xl font-serif mb-6 md:mb-10 leading-tight">Translating Craft to Scalable Design</h2>
+            <p class="font-serif text-lg md:text-xl leading-relaxed opacity-80">Everything is made from natural leather, hand-drawn and hand-cut in the Tholu Bommalata tradition. Lit from within and around, the translucent hides glow warm gold, and the fine perforations throw delicate shadows onto the walls, just as they do on a puppet theatre screen. The craft that once told these stories by lamplight now does it overhead, in a home.</p>
+        </section>
+        <section class="px-6 max-w-[1400px] mx-auto pt-16 md:pt-24 text-left">
+            <h3 class="font-serif text-2xl md:text-3xl mb-8 md:mb-12">Explore more of our spatial projects</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-6">
+                <div onclick="showProject('project-1')" class="group cursor-pointer flex flex-col gap-4"><div class="w-full aspect-[3/4] bg-[url('assets/home/thumb-p1.jpg')] bg-cover bg-center overflow-hidden shadow-lg"><div class="w-full h-full bg-black/20 group-hover:bg-transparent transition-colors duration-700"></div></div><h4 class="font-serif text-xl">Shadows of Tholu</h4></div>
+                <div onclick="showProject('project-3')" class="group cursor-pointer flex flex-col gap-4"><div class="w-full aspect-[3/4] bg-[url('assets/home/thumb-p3.jpg')] bg-cover bg-center overflow-hidden shadow-lg"><div class="w-full h-full bg-black/20 group-hover:bg-transparent transition-colors duration-700"></div></div><h4 class="font-serif text-xl">The Jungle Book Reimagined</h4></div>
+                <div onclick="showProject('project-4')" class="group cursor-pointer flex flex-col gap-4"><div class="w-full aspect-[3/4] bg-[url('assets/home/thumb-p4.jpg')] bg-cover bg-center overflow-hidden shadow-lg"><div class="w-full h-full bg-black/20 group-hover:bg-transparent transition-colors duration-700"></div></div><h4 class="font-serif text-xl">Contemporary Home Decor</h4></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- PROJECT 03 -->
+    <main id="project-3" class="project-view fixed inset-0 z-40 bg-crimson text-cream overflow-y-auto transform translate-y-full transition-transform duration-[800ms] ease-[cubic-bezier(0.76,0,0.24,1)] pb-16 md:pb-24">
+        <div class="w-full h-[50vh] md:h-[80vh] bg-[url('assets/project-3/hero.jpg')] bg-cover bg-center"></div>
+        <section class="py-12 md:py-16 px-6 max-w-[1400px] mx-auto border-b border-cream/20 flex flex-col md:flex-row gap-8 md:gap-12 items-start justify-between">
+            <div class="w-full md:w-2/3 text-left">
+                <h1 class="text-4xl md:text-6xl lg:text-7xl mb-6 md:mb-8 font-serif leading-tight">Indianising The Jungle Book Characters</h1>
+                <div class="flex flex-col md:flex-row gap-2 md:gap-8 font-mono text-[10px] md:text-xs uppercase opacity-70">
+                    <span>Disney-USA</span><span class="hidden md:inline">|</span><span>2020</span>
+                </div>
+            </div>
+            <div class="w-full md:w-1/3 flex flex-col items-start md:items-end text-left md:text-right">
+                <p class="font-serif text-lg leading-relaxed opacity-90">A design internship focused on adapting Disney's iconic characters into traditional Indian puppetry aesthetics through color, form, and costume analysis.</p>
+            </div>
+        </section>
+        <section class="px-6 max-w-[1400px] mx-auto py-12 md:py-16 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="aspect-[4/3] bg-black/40 bg-[url('assets/project-3/grid-1.jpg')] bg-cover bg-center"></div>
+            <div class="aspect-[4/3] bg-black/40 bg-[url('assets/project-3/grid-2.jpg')] bg-cover bg-center"></div>
+        </section>
+        <section class="px-6 max-w-4xl mx-auto py-12 md:py-16 text-left">
+            <h2 class="text-3xl md:text-5xl font-serif mb-6 md:mb-10 leading-tight">Reinterpreting Visual Elements</h2>
+            <p class="font-serif text-lg md:text-xl leading-relaxed mb-8 opacity-80">The objective was to completely reimagine the familiar forms using the intricate visual language of regional Indian puppetry. This required deep cultural research into traditional pigments and fabrics.</p>
+        </section>
+        
+        <section class="w-full relative py-8 md:py-12 my-8 md:my-12 overflow-hidden bg-cream/5 flex">
+            <div class="animate-marquee">
+                <div class="flex gap-4 pr-4">
+                    <div class="aspect-[4/3] w-[85vw] sm:w-[60vw] md:w-[45vw] lg:w-[35vw] bg-[url('assets/project-3/carousel-1.jpg')] bg-cover bg-center shadow-lg"></div>
+                    <div class="aspect-[4/3] w-[85vw] sm:w-[60vw] md:w-[45vw] lg:w-[35vw] bg-[url('assets/project-3/carousel-2.jpg')] bg-cover bg-center shadow-lg"></div>
+                    <div class="aspect-[4/3] w-[85vw] sm:w-[60vw] md:w-[45vw] lg:w-[35vw] bg-[url('assets/project-3/carousel-3.jpg')] bg-cover bg-center shadow-lg"></div>
+                    <div class="aspect-[4/3] w-[85vw] sm:w-[60vw] md:w-[45vw] lg:w-[35vw] bg-[url('assets/project-3/carousel-4.jpg')] bg-cover bg-center shadow-lg"></div>
+                </div>
+                <div class="flex gap-4 pr-4">
+                    <div class="aspect-[4/3] w-[85vw] sm:w-[60vw] md:w-[45vw] lg:w-[35vw] bg-[url('assets/project-3/carousel-1.jpg')] bg-cover bg-center shadow-lg"></div>
+                    <div class="aspect-[4/3] w-[85vw] sm:w-[60vw] md:w-[45vw] lg:w-[35vw] bg-[url('assets/project-3/carousel-2.jpg')] bg-cover bg-center shadow-lg"></div>
+                    <div class="aspect-[4/3] w-[85vw] sm:w-[60vw] md:w-[45vw] lg:w-[35vw] bg-[url('assets/project-3/carousel-3.jpg')] bg-cover bg-center shadow-lg"></div>
+                    <div class="aspect-[4/3] w-[85vw] sm:w-[60vw] md:w-[45vw] lg:w-[35vw] bg-[url('assets/project-3/carousel-4.jpg')] bg-cover bg-center shadow-lg"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="px-6 max-w-4xl mx-auto py-12 md:py-16 text-left">
+            <p class="font-serif text-lg md:text-xl leading-relaxed opacity-80">Each character design was broken down to its geometric essence, translated into flat, two-dimensional articulated planes that reflect the mechanics of shadow puppets.</p>
+        </section>
+        <section class="px-6 max-w-[1400px] mx-auto py-8 md:py-12">
+            <div class="w-full aspect-video bg-black/80 relative flex items-center justify-center cursor-pointer group bg-[url('assets/project-3/video-thumb.jpg')] bg-cover bg-center mix-blend-luminosity">
+                <div class="absolute inset-0 bg-crimson/40 group-hover:bg-crimson/20 transition-colors"></div>
+                <div class="relative z-10 font-mono text-xs md:text-sm uppercase tracking-widest border border-cream px-6 md:px-8 py-3 md:py-4 group-hover:scale-105 group-hover:bg-cream group-hover:text-crimson transition-all">Watch Now</div>
+            </div>
+        </section>
+        <section class="px-6 max-w-4xl mx-auto py-12 md:py-20 border-b border-cream/20 text-left">
+            <h2 class="text-3xl md:text-5xl font-serif mb-6 md:mb-10 leading-tight">A Cultural Narrative Through Character</h2>
+            <p class="font-serif text-lg md:text-xl leading-relaxed opacity-80">The resulting project successfully married recognizable pop-culture silhouettes with hyper-local heritage art, acting as a case study for visual localization.</p>
+        </section>
+        <section class="px-6 max-w-[1400px] mx-auto pt-16 md:pt-24 text-left">
+            <h3 class="font-serif text-2xl md:text-3xl mb-8 md:mb-12">Explore more of our spatial projects</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-6">
+                <div onclick="showProject('project-1')" class="group cursor-pointer flex flex-col gap-4"><div class="w-full aspect-[3/4] bg-[url('assets/home/thumb-p1.jpg')] bg-cover bg-center overflow-hidden shadow-lg"><div class="w-full h-full bg-black/20 group-hover:bg-transparent transition-colors duration-700"></div></div><h4 class="font-serif text-xl">Shadows of Tholu</h4></div>
+                <div onclick="showProject('project-2')" class="group cursor-pointer flex flex-col gap-4"><div class="w-full aspect-[3/4] bg-[url('assets/home/thumb-p2.jpg')] bg-cover bg-center overflow-hidden shadow-lg"><div class="w-full h-full bg-black/20 group-hover:bg-transparent transition-colors duration-700"></div></div><h4 class="font-serif text-xl">Hanuman's Journey to the Pooja Room</h4></div>
+                <div onclick="showProject('project-4')" class="group cursor-pointer flex flex-col gap-4"><div class="w-full aspect-[3/4] bg-[url('assets/home/thumb-p4.jpg')] bg-cover bg-center overflow-hidden shadow-lg"><div class="w-full h-full bg-black/20 group-hover:bg-transparent transition-colors duration-700"></div></div><h4 class="font-serif text-xl">Contemporary Home Decor</h4></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- PROJECT 04 -->
+    <main id="project-4" class="project-view fixed inset-0 z-40 bg-crimson text-cream overflow-y-auto transform translate-y-full transition-transform duration-[800ms] ease-[cubic-bezier(0.76,0,0.24,1)] pb-16 md:pb-24">
+        <div class="w-full h-[50vh] md:h-[80vh] bg-[url('assets/project-4/hero.jpg')] bg-cover bg-center"></div>
+        <section class="py-12 md:py-16 px-6 max-w-[1400px] mx-auto border-b border-cream/20 flex flex-col md:flex-row gap-8 md:gap-12 items-start justify-between">
+            <div class="w-full md:w-2/3 text-left">
+                <h1 class="text-4xl md:text-6xl lg:text-7xl mb-6 md:mb-8 font-serif leading-tight">Contemporary Home Decor</h1>
+                <div class="flex flex-col md:flex-row gap-2 md:gap-8 font-mono text-[10px] md:text-xs uppercase opacity-70">
+                    <span>NIFT Master of Design</span><span class="hidden md:inline">|</span><span>2024 - 2026</span>
+                </div>
+            </div>
+            <div class="w-full md:w-1/3 flex flex-col items-start md:items-end text-left md:text-right">
+                <p class="font-serif text-lg leading-relaxed opacity-90">Translating traditional Indian craft techniques, motifs, and materials into modern interior applications and scalable home decor products.</p>
+            </div>
+        </section>
+        <section class="px-6 max-w-[1400px] mx-auto py-12 md:py-16 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="aspect-[4/3] bg-black/40 bg-[url('assets/project-4/grid-1.jpg')] bg-cover bg-center"></div>
+            <div class="aspect-[4/3] bg-black/40 bg-[url('assets/project-4/grid-2.jpg')] bg-cover bg-center"></div>
+        </section>
+        <section class="px-6 max-w-4xl mx-auto py-12 md:py-16 text-left">
+            <h2 class="text-3xl md:text-5xl font-serif mb-6 md:mb-10 leading-tight">Bridging Heritage and Modernity</h2>
+            <p class="font-serif text-lg md:text-xl leading-relaxed mb-8 opacity-80">A deep dive into natural dyes, surface detailing, and the integration of wood and leather into minimalist living spaces. The study serves as a bridge for heritage crafts to enter contemporary markets.</p>
+        </section>
+        
+        <section class="w-full relative py-8 md:py-12 my-8 md:my-12 overflow-hidden bg-cream/5 flex">
+            <div class="animate-marquee">
+                <div class="flex gap-4 pr-4">
+                    <div class="aspect-[4/3] w-[85vw] sm:w-[60vw] md:w-[45vw] lg:w-[35vw] bg-[url('assets/project-4/carousel-1.jpg')] bg-cover bg-center shadow-lg"></div>
+                    <div class="aspect-[4/3] w-[85vw] sm:w-[60vw] md:w-[45vw] lg:w-[35vw] bg-[url('assets/project-4/carousel-2.jpg')] bg-cover bg-center shadow-lg"></div>
+                    <div class="aspect-[4/3] w-[85vw] sm:w-[60vw] md:w-[45vw] lg:w-[35vw] bg-[url('assets/project-4/carousel-3.jpg')] bg-cover bg-center shadow-lg"></div>
+                    <div class="aspect-[4/3] w-[85vw] sm:w-[60vw] md:w-[45vw] lg:w-[35vw] bg-[url('assets/project-4/carousel-4.jpg')] bg-cover bg-center shadow-lg"></div>
+                </div>
+                <div class="flex gap-4 pr-4">
+                    <div class="aspect-[4/3] w-[85vw] sm:w-[60vw] md:w-[45vw] lg:w-[35vw] bg-[url('assets/project-4/carousel-1.jpg')] bg-cover bg-center shadow-lg"></div>
+                    <div class="aspect-[4/3] w-[85vw] sm:w-[60vw] md:w-[45vw] lg:w-[35vw] bg-[url('assets/project-4/carousel-2.jpg')] bg-cover bg-center shadow-lg"></div>
+                    <div class="aspect-[4/3] w-[85vw] sm:w-[60vw] md:w-[45vw] lg:w-[35vw] bg-[url('assets/project-4/carousel-3.jpg')] bg-cover bg-center shadow-lg"></div>
+                    <div class="aspect-[4/3] w-[85vw] sm:w-[60vw] md:w-[45vw] lg:w-[35vw] bg-[url('assets/project-4/carousel-4.jpg')] bg-cover bg-center shadow-lg"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="px-6 max-w-4xl mx-auto py-12 md:py-16 text-left">
+            <p class="font-serif text-lg md:text-xl leading-relaxed opacity-80">The exploration of texture and rhythmic pattern forms the basis of the collection, allowing spatial interiors to benefit from the tactile richness of historically significant weaving techniques.</p>
+        </section>
+        
+        <!-- Embedded Heyzine Flipbook -->
+        <section class="px-6 max-w-[1400px] mx-auto py-8 md:py-12 w-full">
+            <iframe allowtransparency="true" allowfullscreen allow="autoplay; fullscreen; clipboard-write" scrolling="no" class="w-full h-[400px] md:h-[50vh] border border-cream/20 shadow-lg bg-transparent" src="https://heyzine.com/flip-book/eb1d7d4808.html"></iframe>
+        </section>
+
+        <section class="px-6 max-w-4xl mx-auto py-12 md:py-20 border-b border-cream/20 text-left">
+            <h2 class="text-3xl md:text-5xl font-serif mb-6 md:mb-10 leading-tight">Material Surface and Experimentation</h2>
+            <p class="font-serif text-lg md:text-xl leading-relaxed opacity-80">Through material surface interventions, the final pieces establish a sophisticated dialogue between the raw, imperfect nature of the craft and the refined demands of modern spatial styling.</p>
+        </section>
+        <section class="px-6 max-w-[1400px] mx-auto pt-16 md:pt-24 text-left">
+            <h3 class="font-serif text-2xl md:text-3xl mb-8 md:mb-12">Explore more of our spatial projects</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-6">
+                <div onclick="showProject('project-1')" class="group cursor-pointer flex flex-col gap-4"><div class="w-full aspect-[3/4] bg-[url('assets/home/thumb-p1.jpg')] bg-cover bg-center overflow-hidden shadow-lg"><div class="w-full h-full bg-black/20 group-hover:bg-transparent transition-colors duration-700"></div></div><h4 class="font-serif text-xl">Shadows of Tholu</h4></div>
+                <div onclick="showProject('project-2')" class="group cursor-pointer flex flex-col gap-4"><div class="w-full aspect-[3/4] bg-[url('assets/home/thumb-p2.jpg')] bg-cover bg-center overflow-hidden shadow-lg"><div class="w-full h-full bg-black/20 group-hover:bg-transparent transition-colors duration-700"></div></div><h4 class="font-serif text-xl">Hanuman's Journey to the Pooja Room</h4></div>
+                <div onclick="showProject('project-3')" class="group cursor-pointer flex flex-col gap-4"><div class="w-full aspect-[3/4] bg-[url('assets/home/thumb-p3.jpg')] bg-cover bg-center overflow-hidden shadow-lg"><div class="w-full h-full bg-black/20 group-hover:bg-transparent transition-colors duration-700"></div></div><h4 class="font-serif text-xl">The Jungle Book Reimagined</h4></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- App Logic Scripts -->
+    <script>
+        // Mobile Menu Logic
+        let isMobileMenuOpen = false;
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const btn = document.getElementById('hamburger-btn');
+            const spans = btn.querySelectorAll('span');
+
+            isMobileMenuOpen = !isMobileMenuOpen;
+
+            if (isMobileMenuOpen) {
+                menu.classList.remove('pointer-events-none', 'opacity-0');
+                menu.classList.add('opacity-100', 'pointer-events-auto');
+                // Hamburger to X animation
+                spans[0].style.transform = 'translateY(7px) rotate(45deg)';
+                spans[1].style.opacity = '0';
+                spans[2].style.transform = 'translateY(-7px) rotate(-45deg)';
+            } else {
+                menu.classList.remove('opacity-100', 'pointer-events-auto');
+                menu.classList.add('opacity-0', 'pointer-events-none');
+                // Hamburger revert
+                spans[0].style.transform = 'none';
+                spans[1].style.opacity = '1';
+                spans[2].style.transform = 'none';
+            }
+        }
+
+        // View Switching Logic
+        function showProject(id) {
+            document.body.classList.add('overflow-hidden');
+            document.querySelectorAll('.project-view').forEach(el => {
+                el.classList.remove('translate-y-0');
+                el.classList.add('translate-y-full');
+            });
+            const projectView = document.getElementById(id);
+            if (projectView) {
+                projectView.classList.remove('translate-y-full');
+                projectView.classList.add('translate-y-0');
+                projectView.scrollTo(0, 0);
+            }
+            setTimeout(() => ScrollTrigger.refresh(), 100);
+        }
+
+        function showHome(hash) {
+            document.body.classList.remove('overflow-hidden');
+            let projectWasOpen = false;
+            document.querySelectorAll('.project-view').forEach(el => {
+                if(!el.classList.contains('translate-y-full')) {
+                    el.classList.remove('translate-y-0');
+                    el.classList.add('translate-y-full');
+                    projectWasOpen = true;
+                }
+            });
+            const performScroll = () => {
+                ScrollTrigger.refresh();
+                if (hash) {
+                    const element = document.querySelector(hash);
+                    if (element) {
+                        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                } else {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            };
+            if (projectWasOpen) {
+                setTimeout(performScroll, 600);
+            } else {
+                performScroll();
+            }
+        }
+
+        // GSAP Scroll Reveal & Dome Gallery Initialization
+        document.addEventListener("DOMContentLoaded", () => {
+            gsap.registerPlugin(ScrollTrigger);
+            
+            const container = document.getElementById('scroll-reveal-container');
+            if (container) {
+                function splitTextForReveal(elementId) {
+                    const el = document.getElementById(elementId);
+                    if (!el) return;
+                    const rawText = el.innerText;
+                    el.innerHTML = ''; 
+                    const tokens = rawText.split(/(\s+)/);
+                    tokens.forEach(token => {
+                        if (token.match(/^\s+$/)) {
+                            el.appendChild(document.createTextNode(token));
+                        } else {
+                            const span = document.createElement('span');
+                            span.className = 'word inline-block';
+                            span.innerText = token;
+                            el.appendChild(span);
+                        }
+                    });
+                }
+
+                splitTextForReveal('scroll-reveal-text1');
+                splitTextForReveal('scroll-reveal-text2');
+
+                const words = container.querySelectorAll('.word');
+                gsap.set(container, { transformOrigin: '0% 50%', rotate: 3 });
+                gsap.set(words, { opacity: 0.1, filter: `blur(4px)`, willChange: 'opacity, filter' });
+
+                gsap.to(container, {
+                    rotate: 0,
+                    ease: 'none',
+                    scrollTrigger: { trigger: container, start: 'top bottom', end: 'bottom bottom', scrub: true }
+                });
+
+                gsap.to(words, {
+                    opacity: 1,
+                    filter: 'blur(0px)',
+                    ease: 'none',
+                    stagger: 0.05,
+                    scrollTrigger: { trigger: container, start: 'top bottom-=20%', end: 'bottom bottom', scrub: true }
+                });
+            }
+
+            // Dome Gallery Setup
+            initDomeGallery();
+        });
+
+        function initDomeGallery() {
+            const root = document.getElementById('dome-gallery-root');
+            if (!root) return;
+
+            const sphere = root.querySelector('.dg-sphere');
+            
+            // Array of exactly 17 images for the dome
+            const images = Array.from({length: 17}, (_, i) => `assets/things/img-${i+1}.jpg`);
+
+            const seg = 35;
+            const xCols = Array.from({ length: seg }, (_, i) => -37 + i * 2);
+            const evenYs = [-4, -2, 0, 2, 4];
+            const oddYs = [-3, -1, 1, 3, 5];
+
+            const coords = xCols.flatMap((x, c) => {
+                const ys = c % 2 === 0 ? evenYs : oddYs;
+                return ys.map(y => ({ x, y, sizeX: 2, sizeY: 2 }));
+            });
+
+            // Map the 17 images sequentially across the dome slots
+            const usedImages = coords.map((_, i) => images[i % images.length]);
+
+            coords.forEach((c, i) => {
+                const unit = 360 / seg / 2;
+                const rotY = unit * (c.x + (c.sizeX - 1) / 2);
+                const rotX = unit * (c.y - (c.sizeY - 1) / 2);
+
+                const el = document.createElement('div');
+                el.className = 'dg-item bg-cream/10 rounded-2xl overflow-hidden cursor-pointer hover:shadow-2xl transition-shadow';
+                el.style.setProperty('--item-rot-y', `${rotY}deg`);
+                el.style.setProperty('--item-rot-x', `${-rotX}deg`);
+
+                const img = document.createElement('img');
+                img.src = usedImages[i];
+                img.className = 'w-full h-full object-cover pointer-events-none opacity-90 hover:opacity-100 transition-opacity';
+                el.appendChild(img);
+
+                el.addEventListener('click', () => openLightbox(usedImages[i]));
+                sphere.appendChild(el);
+            });
+
+            let isDragging = false;
+            let startX, startY;
+            let lastX, lastY;
+            let vx = 0, vy = 0;
+            let rotX = 0, rotY = 0;
+            let curRotX = 0, curRotY = 0;
+            let radius = 800;
+
+            function updateRadius() {
+                const rect = root.getBoundingClientRect();
+                radius = Math.min(rect.width, rect.height * 1.35) * 0.5; 
+                radius = Math.max(300, Math.min(radius, 1000));
+                root.style.setProperty('--radius', `${radius}px`);
+                updateTransform();
+            }
+
+            window.addEventListener('resize', updateRadius);
+            updateRadius();
+
+            function updateTransform() {
+                sphere.style.transform = `translateZ(-${radius}px) rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+            }
+
+            // Support both Touch and Mouse dragging
+            root.addEventListener('pointerdown', e => {
+                isDragging = true;
+                startX = e.clientX; startY = e.clientY;
+                lastX = startX; lastY = startY;
+                curRotX = rotX; curRotY = rotY;
+                vx = 0; vy = 0;
+                root.style.cursor = 'grabbing';
+            });
+
+            window.addEventListener('pointermove', e => {
+                if(!isDragging) return;
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+
+                vx = e.clientX - lastX;
+                vy = e.clientY - lastY;
+                lastX = e.clientX; lastY = e.clientY;
+
+                rotY = curRotY + (dx * 0.15);
+                rotX = Math.max(-10, Math.min(10, curRotX - (dy * 0.15)));
+                updateTransform();
+            });
+
+            window.addEventListener('pointerup', () => {
+                if(!isDragging) return;
+                isDragging = false;
+                root.style.cursor = 'grab';
+                requestAnimationFrame(applyInertia);
+            });
+
+            function applyInertia() {
+                if(!isDragging && (Math.abs(vx) > 0.1 || Math.abs(vy) > 0.1)) {
+                    rotY += vx * 0.15;
+                    rotX = Math.max(-10, Math.min(10, rotX - vy * 0.15));
+                    updateTransform();
+                    vx *= 0.92;
+                    vy *= 0.92;
+                    requestAnimationFrame(applyInertia);
+                }
+            }
+
+            function openLightbox(src) {
+                const overlay = document.createElement('div');
+                overlay.className = 'fixed inset-0 z-[100] bg-cream/95 flex items-center justify-center p-4 opacity-0 transition-opacity duration-300';
+                
+                const img = document.createElement('img');
+                img.src = src;
+                img.className = 'max-w-full max-h-full rounded-lg shadow-2xl scale-95 transition-transform duration-300';
+                
+                const closeBtn = document.createElement('button');
+                closeBtn.innerHTML = 'CLOSE';
+                closeBtn.className = 'absolute top-6 right-6 font-mono text-xs uppercase tracking-widest text-forest hover:opacity-50';
+                
+                overlay.appendChild(img);
+                overlay.appendChild(closeBtn);
+                document.body.appendChild(overlay);
+
+                requestAnimationFrame(() => {
+                    overlay.classList.remove('opacity-0');
+                    img.classList.remove('scale-95');
+                });
+
+                const close = () => {
+                    overlay.classList.add('opacity-0');
+                    img.classList.add('scale-95');
+                    setTimeout(() => overlay.remove(), 300);
+                };
+
+                overlay.addEventListener('click', (e) => {
+                    if(e.target === overlay || e.target === closeBtn) close();
+                });
+            }
+        }
+    </script>
+</body>
+</html>
