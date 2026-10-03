@@ -559,8 +559,10 @@
         // View Switching Logic
         function showProject(id) {
             document.body.classList.add('overflow-hidden');
-            document.querySelectorAll('video').forEach(video => {
+            document.querySelectorAll('.project-view video').forEach(video => {
                 video.pause();
+                video.currentTime = 0;
+                video.muted = true;
             });
             document.querySelectorAll('.project-view').forEach(el => {
                 el.classList.remove('translate-y-0');
@@ -586,8 +588,10 @@
 
         function showHome(hash) {
             document.body.classList.remove('overflow-hidden');
-            document.querySelectorAll('video').forEach(video => {
+            document.querySelectorAll('.project-view video').forEach(video => {
                 video.pause();
+                video.currentTime = 0;
+                video.muted = true;
             });
             let projectWasOpen = false;
             document.querySelectorAll('.project-view').forEach(el => {
