@@ -261,7 +261,6 @@
                 <div><span class="opacity-50 block mb-2">Email</span><a href="mailto:sindhelokesh1997@gmail.com" class="hover:opacity-70">sindhelokesh1997@gmail.com</a></div>
                 <div class="mt-8 md:mt-0"><span class="opacity-50 block mb-2">Location</span><span>Bengaluru, India</span></div>
                 <div class="mt-8 md:mt-0 md:text-right"><span class="opacity-50 block mb-2">Tel</span><a href="tel:+918978257805" class="hover:opacity-70">+91 89782 57805</a></div>
-                <div class="mt-8 md:mt-0 md:col-span-3 flex gap-6"><a href="https://www.linkedin.com/in/sindhe-lokesh-805376151/?isSelfProfile=true" target="_blank" rel="noopener noreferrer" class="hover:opacity-70">LinkedIn</a><a href="https://www.instagram.com/sindhe_lokesh_chithambara_rao?stkn=MThleXl1ZDZ5aHpxdQ==" target="_blank" rel="noopener noreferrer" class="hover:opacity-70">Instagram</a></div>
             </div>
             <div class="mt-16 md:mt-24 text-center"><h2 class="text-[15vw] md:text-[12vw] leading-none uppercase tracking-tighter">Lokesh.</h2></div>
         </footer>
@@ -527,6 +526,11 @@
     </main>
 
 
+    <div id="video-lightbox" class="video-lightbox">
+        <button onclick="closeVideo()" class="video-lightbox-close font-mono text-xs uppercase tracking-widest text-cream hover:opacity-50">CLOSE</button>
+        <video id="video-player" controls playsinline></video>
+    </div>
+
     <!-- App Logic Scripts -->
     <script>
         function openVideo(src) {
@@ -584,11 +588,6 @@
             document.querySelectorAll('.project-view').forEach(el => {
                 el.classList.remove('translate-y-0');
                 el.classList.add('translate-y-full');
-                el.querySelectorAll('video[autoplay]').forEach(video => {
-                    video.pause();
-                    video.currentTime = 0;
-                    video.muted = true;
-                });
             });
             const projectView = document.getElementById(id);
             if (projectView) {
@@ -596,7 +595,7 @@
                 projectView.classList.add('translate-y-0');
                 projectView.scrollTo(0, 0);
                 projectView.querySelectorAll('video[autoplay]').forEach(video => {
-                    if (id !== 'project-3') video.muted = true;
+                    video.muted = true;
                     video.play().catch(() => {});
                 });
             }
@@ -610,11 +609,6 @@
                 if(!el.classList.contains('translate-y-full')) {
                     el.classList.remove('translate-y-0');
                     el.classList.add('translate-y-full');
-                    el.querySelectorAll('video[autoplay]').forEach(video => {
-                        video.pause();
-                        video.currentTime = 0;
-                        video.muted = true;
-                    });
                     projectWasOpen = true;
                 }
             });
