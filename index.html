@@ -55,31 +55,45 @@
             animation-play-state: paused;
         }
 
-        /* Dome Gallery Specific Styles */
-        .dg-stage {
-            transform-style: preserve-3d;
-            perspective: 1200px;
+        .things-marquee-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
         }
-        .dg-sphere {
-            transform-style: preserve-3d;
+        .things-marquee {
+            width: 100%;
+            overflow: hidden;
+        }
+        .things-track {
+            display: flex;
+            width: max-content;
+            gap: 24px;
+            animation: things-marquee-left 45s linear infinite;
             will-change: transform;
         }
-        .dg-item {
-            position: absolute;
-            left: 50%; top: 50%;
-            width: 140px; height: 180px;
-            margin-left: -70px; margin-top: -90px;
-            transform-style: preserve-3d;
-            backface-visibility: hidden;
-            transform: rotateY(var(--item-rot-y)) rotateX(var(--item-rot-x)) translateZ(var(--radius));
-            transition: opacity 0.3s ease;
+        .things-marquee-reverse .things-track {
+            animation-name: things-marquee-right;
         }
-        @media (min-width: 768px) {
-            .dg-item {
-                width: 220px; height: 300px;
-                margin-left: -110px; margin-top: -150px;
-            }
+        .things-marquee:hover .things-track {
+            animation-play-state: paused;
         }
+        .things-track img {
+            width: clamp(280px, 38vw, 560px);
+            aspect-ratio: 16 / 9;
+            height: auto;
+            flex: 0 0 auto;
+            object-fit: cover;
+            display: block;
+        }
+        @keyframes things-marquee-left {
+            from { transform: translateX(0); }
+            to { transform: translateX(calc(-50% - 12px)); }
+        }
+        @keyframes things-marquee-right {
+            from { transform: translateX(calc(-50% - 12px)); }
+            to { transform: translateX(0); }
+        }
+
     </style>
 </head>
 <body class="bg-cream text-forest font-serif antialiased overflow-x-hidden transition-colors">
@@ -198,21 +212,20 @@
             </div>
         </section>
 
-        <!-- Things Along the Way (3D Dome Gallery Edge-to-Edge) -->
+        <!-- Things Along the Way -->
         <section id="things" class="bg-cream py-24 md:py-40 relative overflow-hidden select-none">
             <div class="text-left md:text-center mb-12 md:mb-24 relative z-10 pointer-events-none px-6 w-full max-w-[1400px] mx-auto">
                 <h2 class="text-4xl md:text-6xl lg:text-7xl uppercase tracking-widest text-crimson font-serif">Things Along the Way</h2>
-                <p class="font-mono text-xs md:text-sm uppercase tracking-widest text-forest/70 mt-4">Drag to explore</p>
+                <p class="font-mono text-xs md:text-sm uppercase tracking-widest text-forest/70 mt-4">Move through the things</p>
             </div>
-            
-            <div id="dome-gallery-root" class="w-full max-w-[1400px] mx-auto h-[60vh] md:h-[80vh] relative cursor-grab active:cursor-grabbing">
-                <div class="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-cream to-transparent z-20 pointer-events-none"></div>
-                <div class="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-cream to-transparent z-20 pointer-events-none"></div>
-                
-                <div class="dg-stage absolute inset-0 w-full h-full flex items-center justify-center">
-                    <div class="dg-sphere w-full h-full absolute inset-0 flex items-center justify-center">
-                        <!-- JavaScript will inject the exactly 17 images mapped across the dome grid here -->
-                    </div>
+
+            <div class="things-marquee-wrap w-full overflow-hidden">
+                <div class="things-marquee things-marquee-forward">
+                    <div class="things-track" id="things-track-1"></div>
+                </div>
+
+                <div class="things-marquee things-marquee-reverse">
+                    <div class="things-track" id="things-track-2"></div>
                 </div>
             </div>
         </section>
@@ -300,7 +313,7 @@
             <p class="font-serif text-lg md:text-xl leading-relaxed opacity-80">Spanning <b>5,600 square feet</b> and made up of <b>2,650 individual leather pieces</b>, it is, to our knowledge, the largest single craft installation in India.</p>
         </section>
         <section class="px-6 max-w-[1400px] mx-auto py-8 md:py-12">
-            <div class="w-full aspect-video bg-black/80 relative flex items-center justify-center cursor-pointer group bg-[url('assets/project-1/video-thumb.jpg')] bg-cover bg-center mix-blend-luminosity">
+            <div onclick="openVideo('assets/project-1/video.mp4')" class="w-full aspect-video bg-black/80 relative flex items-center justify-center cursor-pointer group bg-[url('assets/project-1/video-thumb.jpg')] bg-cover bg-center mix-blend-luminosity">
                 <div class="absolute inset-0 bg-crimson/40 group-hover:bg-crimson/20 transition-colors"></div>
                 <div class="relative z-10 font-mono text-xs md:text-sm uppercase tracking-widest border border-cream px-6 md:px-8 py-3 md:py-4 group-hover:scale-105 group-hover:bg-cream group-hover:text-crimson transition-all">Watch Now</div>
             </div>
@@ -364,7 +377,7 @@
             <p class="font-serif text-lg md:text-xl leading-relaxed opacity-80">He passes birds in flight and drifting clouds, then mountains and a forest of tall trees. Beyond them lie crop fields, a river, and finally a sea alive with fish. Each landscape is its own zone of the ceiling, so the journey can be read from one end of the walkway to the other.</p>
         </section>
         <section class="px-6 max-w-[1400px] mx-auto py-8 md:py-12">
-            <div class="w-full aspect-video bg-black/80 relative flex items-center justify-center cursor-pointer group bg-[url('assets/project-2/video-thumb.jpg')] bg-cover bg-center mix-blend-luminosity">
+            <div onclick="openVideo('assets/project-2/video.mp4')" class="w-full aspect-video bg-black/80 relative flex items-center justify-center cursor-pointer group bg-[url('assets/project-2/video-thumb.jpg')] bg-cover bg-center mix-blend-luminosity">
                 <div class="absolute inset-0 bg-crimson/40 group-hover:bg-crimson/20 transition-colors"></div>
                 <div class="relative z-10 font-mono text-xs md:text-sm uppercase tracking-widest border border-cream px-6 md:px-8 py-3 md:py-4 group-hover:scale-105 group-hover:bg-cream group-hover:text-crimson transition-all">Watch Now</div>
             </div>
@@ -427,7 +440,7 @@
             <p class="font-serif text-lg md:text-xl leading-relaxed opacity-80">Each character design was broken down to its geometric essence, translated into flat, two-dimensional articulated planes that reflect the mechanics of shadow puppets.</p>
         </section>
         <section class="px-6 max-w-[1400px] mx-auto py-8 md:py-12">
-            <div class="w-full aspect-video bg-black/80 relative flex items-center justify-center cursor-pointer group bg-[url('assets/project-3/video-thumb.jpg')] bg-cover bg-center mix-blend-luminosity">
+            <div onclick="openVideo('assets/project-3/video.mp4')" class="w-full aspect-video bg-black/80 relative flex items-center justify-center cursor-pointer group bg-[url('assets/project-3/video-thumb.jpg')] bg-cover bg-center mix-blend-luminosity">
                 <div class="absolute inset-0 bg-crimson/40 group-hover:bg-crimson/20 transition-colors"></div>
                 <div class="relative z-10 font-mono text-xs md:text-sm uppercase tracking-widest border border-cream px-6 md:px-8 py-3 md:py-4 group-hover:scale-105 group-hover:bg-cream group-hover:text-crimson transition-all">Watch Now</div>
             </div>
@@ -509,8 +522,37 @@
         </section>
     </main>
 
+
+    <div id="video-lightbox" class="video-lightbox">
+        <button onclick="closeVideo()" class="video-lightbox-close font-mono text-xs uppercase tracking-widest text-cream hover:opacity-50">CLOSE</button>
+        <video id="video-player" controls playsinline></video>
+    </div>
+
     <!-- App Logic Scripts -->
     <script>
+        function openVideo(src) {
+            const lightbox = document.getElementById('video-lightbox');
+            const player = document.getElementById('video-player');
+            player.src = src;
+            lightbox.classList.add('active');
+            document.body.classList.add('overflow-hidden');
+            player.play().catch(() => {});
+        }
+
+        function closeVideo() {
+            const lightbox = document.getElementById('video-lightbox');
+            const player = document.getElementById('video-player');
+            player.pause();
+            player.removeAttribute('src');
+            player.load();
+            lightbox.classList.remove('active');
+            document.body.classList.remove('overflow-hidden');
+        }
+
+        document.getElementById('video-lightbox').addEventListener('click', e => {
+            if (e.target.id === 'video-lightbox') closeVideo();
+        });
+
         // Mobile Menu Logic
         let isMobileMenuOpen = false;
         function toggleMobileMenu() {
@@ -581,9 +623,33 @@
             }
         }
 
-        // GSAP Scroll Reveal & Dome Gallery Initialization
+        // GSAP Scroll Reveal Initialization
         document.addEventListener("DOMContentLoaded", () => {
             gsap.registerPlugin(ScrollTrigger);
+
+            // Things Along the Way — exactly 17 source images, split across two marquee rows.
+            const thingsImages = Array.from({ length: 17 }, (_, i) => `assets/things/img-${i + 1}.jpg`);
+            const track1 = document.getElementById('things-track-1');
+            const track2 = document.getElementById('things-track-2');
+
+            if (track1 && track2) {
+                const row1 = thingsImages.slice(0, 9);
+                const row2 = thingsImages.slice(9);
+
+                const populateMarquee = (track, sources) => {
+                    const fragment = document.createDocumentFragment();
+                    [...sources, ...sources].forEach((src) => {
+                        const img = document.createElement('img');
+                        img.src = src;
+                        img.alt = '';
+                        fragment.appendChild(img);
+                    });
+                    track.appendChild(fragment);
+                };
+
+                populateMarquee(track1, row1);
+                populateMarquee(track2, row2);
+            }
             
             const container = document.getElementById('scroll-reveal-container');
             if (container) {
@@ -627,148 +693,7 @@
                 });
             }
 
-            // Dome Gallery Setup
-            initDomeGallery();
         });
-
-        function initDomeGallery() {
-            const root = document.getElementById('dome-gallery-root');
-            if (!root) return;
-
-            const sphere = root.querySelector('.dg-sphere');
-            
-            // Array of exactly 17 images for the dome
-            const images = Array.from({length: 17}, (_, i) => `assets/things/img-${i+1}.jpg`);
-
-            const seg = 35;
-            const xCols = Array.from({ length: seg }, (_, i) => -37 + i * 2);
-            const evenYs = [-4, -2, 0, 2, 4];
-            const oddYs = [-3, -1, 1, 3, 5];
-
-            const coords = xCols.flatMap((x, c) => {
-                const ys = c % 2 === 0 ? evenYs : oddYs;
-                return ys.map(y => ({ x, y, sizeX: 2, sizeY: 2 }));
-            });
-
-            // Map the 17 images sequentially across the dome slots
-            const usedImages = coords.map((_, i) => images[i % images.length]);
-
-            coords.forEach((c, i) => {
-                const unit = 360 / seg / 2;
-                const rotY = unit * (c.x + (c.sizeX - 1) / 2);
-                const rotX = unit * (c.y - (c.sizeY - 1) / 2);
-
-                const el = document.createElement('div');
-                el.className = 'dg-item bg-cream/10 rounded-2xl overflow-hidden cursor-pointer hover:shadow-2xl transition-shadow';
-                el.style.setProperty('--item-rot-y', `${rotY}deg`);
-                el.style.setProperty('--item-rot-x', `${-rotX}deg`);
-
-                const img = document.createElement('img');
-                img.src = usedImages[i];
-                img.className = 'w-full h-full object-cover pointer-events-none opacity-90 hover:opacity-100 transition-opacity';
-                el.appendChild(img);
-
-                el.addEventListener('click', () => openLightbox(usedImages[i]));
-                sphere.appendChild(el);
-            });
-
-            let isDragging = false;
-            let startX, startY;
-            let lastX, lastY;
-            let vx = 0, vy = 0;
-            let rotX = 0, rotY = 0;
-            let curRotX = 0, curRotY = 0;
-            let radius = 800;
-
-            function updateRadius() {
-                const rect = root.getBoundingClientRect();
-                radius = Math.min(rect.width, rect.height * 1.35) * 0.5; 
-                radius = Math.max(300, Math.min(radius, 1000));
-                root.style.setProperty('--radius', `${radius}px`);
-                updateTransform();
-            }
-
-            window.addEventListener('resize', updateRadius);
-            updateRadius();
-
-            function updateTransform() {
-                sphere.style.transform = `translateZ(-${radius}px) rotateX(${rotX}deg) rotateY(${rotY}deg)`;
-            }
-
-            // Support both Touch and Mouse dragging
-            root.addEventListener('pointerdown', e => {
-                isDragging = true;
-                startX = e.clientX; startY = e.clientY;
-                lastX = startX; lastY = startY;
-                curRotX = rotX; curRotY = rotY;
-                vx = 0; vy = 0;
-                root.style.cursor = 'grabbing';
-            });
-
-            window.addEventListener('pointermove', e => {
-                if(!isDragging) return;
-                const dx = e.clientX - startX;
-                const dy = e.clientY - startY;
-
-                vx = e.clientX - lastX;
-                vy = e.clientY - lastY;
-                lastX = e.clientX; lastY = e.clientY;
-
-                rotY = curRotY + (dx * 0.15);
-                rotX = Math.max(-10, Math.min(10, curRotX - (dy * 0.15)));
-                updateTransform();
-            });
-
-            window.addEventListener('pointerup', () => {
-                if(!isDragging) return;
-                isDragging = false;
-                root.style.cursor = 'grab';
-                requestAnimationFrame(applyInertia);
-            });
-
-            function applyInertia() {
-                if(!isDragging && (Math.abs(vx) > 0.1 || Math.abs(vy) > 0.1)) {
-                    rotY += vx * 0.15;
-                    rotX = Math.max(-10, Math.min(10, rotX - vy * 0.15));
-                    updateTransform();
-                    vx *= 0.92;
-                    vy *= 0.92;
-                    requestAnimationFrame(applyInertia);
-                }
-            }
-
-            function openLightbox(src) {
-                const overlay = document.createElement('div');
-                overlay.className = 'fixed inset-0 z-[100] bg-cream/95 flex items-center justify-center p-4 opacity-0 transition-opacity duration-300';
-                
-                const img = document.createElement('img');
-                img.src = src;
-                img.className = 'max-w-full max-h-full rounded-lg shadow-2xl scale-95 transition-transform duration-300';
-                
-                const closeBtn = document.createElement('button');
-                closeBtn.innerHTML = 'CLOSE';
-                closeBtn.className = 'absolute top-6 right-6 font-mono text-xs uppercase tracking-widest text-forest hover:opacity-50';
-                
-                overlay.appendChild(img);
-                overlay.appendChild(closeBtn);
-                document.body.appendChild(overlay);
-
-                requestAnimationFrame(() => {
-                    overlay.classList.remove('opacity-0');
-                    img.classList.remove('scale-95');
-                });
-
-                const close = () => {
-                    overlay.classList.add('opacity-0');
-                    img.classList.add('scale-95');
-                    setTimeout(() => overlay.remove(), 300);
-                };
-
-                overlay.addEventListener('click', (e) => {
-                    if(e.target === overlay || e.target === closeBtn) close();
-                });
-            }
-        }
     </script>
 </body>
 </html>
