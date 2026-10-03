@@ -261,6 +261,8 @@
                 <div><span class="opacity-50 block mb-2">Email</span><a href="mailto:sindhelokesh1997@gmail.com" class="hover:opacity-70">sindhelokesh1997@gmail.com</a></div>
                 <div class="mt-8 md:mt-0"><span class="opacity-50 block mb-2">Location</span><span>Bengaluru, India</span></div>
                 <div class="mt-8 md:mt-0 md:text-right"><span class="opacity-50 block mb-2">Tel</span><a href="tel:+918978257805" class="hover:opacity-70">+91 89782 57805</a></div>
+                <div class="mt-8 md:mt-0"><span class="opacity-50 block mb-2">LinkedIn</span><a href="https://www.linkedin.com/in/sindhe-lokesh-805376151/?isSelfProfile=true" target="_blank" rel="noopener noreferrer" class="hover:opacity-70">LinkedIn</a></div>
+                <div class="mt-8 md:mt-0"><span class="opacity-50 block mb-2">Instagram</span><a href="https://www.instagram.com/sindhe_lokesh_chithambara_rao?stkn=MThleXl1ZDZ5aHpxdQ==" target="_blank" rel="noopener noreferrer" class="hover:opacity-70">Instagram</a></div>
             </div>
             <div class="mt-16 md:mt-24 text-center"><h2 class="text-[15vw] md:text-[12vw] leading-none uppercase tracking-tighter">Lokesh.</h2></div>
         </footer>
@@ -443,7 +445,7 @@
         </section>
         <section class="px-6 max-w-[1400px] mx-auto py-8 md:py-12">
             <div class="w-full aspect-video bg-black/80 relative overflow-hidden">
-                <video class="w-full h-full object-cover" autoplay loop playsinline preload="auto">
+                <video class="w-full h-full object-cover" loop playsinline preload="auto">
                     <source src="assets/project-3/video.mp4" type="video/mp4">
                 </video>
             </div>
@@ -526,36 +528,8 @@
     </main>
 
 
-    <div id="video-lightbox" class="video-lightbox">
-        <button onclick="closeVideo()" class="video-lightbox-close font-mono text-xs uppercase tracking-widest text-cream hover:opacity-50">CLOSE</button>
-        <video id="video-player" controls playsinline></video>
-    </div>
-
     <!-- App Logic Scripts -->
     <script>
-        function openVideo(src) {
-            const lightbox = document.getElementById('video-lightbox');
-            const player = document.getElementById('video-player');
-            player.src = src;
-            lightbox.classList.add('active');
-            document.body.classList.add('overflow-hidden');
-            player.play().catch(() => {});
-        }
-
-        function closeVideo() {
-            const lightbox = document.getElementById('video-lightbox');
-            const player = document.getElementById('video-player');
-            player.pause();
-            player.removeAttribute('src');
-            player.load();
-            lightbox.classList.remove('active');
-            document.body.classList.remove('overflow-hidden');
-        }
-
-        document.getElementById('video-lightbox').addEventListener('click', e => {
-            if (e.target.id === 'video-lightbox') closeVideo();
-        });
-
         // Mobile Menu Logic
         let isMobileMenuOpen = false;
         function toggleMobileMenu() {
@@ -585,6 +559,9 @@
         // View Switching Logic
         function showProject(id) {
             document.body.classList.add('overflow-hidden');
+            document.querySelectorAll('video').forEach(video => {
+                video.pause();
+            });
             document.querySelectorAll('.project-view').forEach(el => {
                 el.classList.remove('translate-y-0');
                 el.classList.add('translate-y-full');
@@ -594,7 +571,7 @@
                 projectView.classList.remove('translate-y-full');
                 projectView.classList.add('translate-y-0');
                 projectView.scrollTo(0, 0);
-                projectView.querySelectorAll('video[autoplay]').forEach(video => {
+                projectView.querySelectorAll('video').forEach(video => {
                     if (id === 'project-3') {
                         video.muted = false;
                         video.volume = 1;
@@ -609,6 +586,9 @@
 
         function showHome(hash) {
             document.body.classList.remove('overflow-hidden');
+            document.querySelectorAll('video').forEach(video => {
+                video.pause();
+            });
             let projectWasOpen = false;
             document.querySelectorAll('.project-view').forEach(el => {
                 if(!el.classList.contains('translate-y-full')) {
